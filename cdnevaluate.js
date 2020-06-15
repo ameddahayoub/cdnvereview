@@ -1,3 +1,4 @@
+var sessionUser;
 var monthNames = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 var dateObj = new Date();
 var month = monthNames[dateObj.getMonth()];
@@ -8,392 +9,360 @@ var seconds = dateObj.getSeconds();
 var hours = dateObj.getHours();
 var output = month + '/' + day + '/' + year + '-' + hours + ':' + minutes + ':' + seconds;
 var sessionUserEvaluate = '';
-var companyName = $('.box-rate').attr('id');
+var companyName = document.getElementsByClassName("box-rate")[0].id;
 var apiUrl = "https://vereview.appspot.com";
-$(document).ready(function() {
-    console.log(companyName);
-    if (!isCompanyExist(companyName)) {
-        $('.box-rate').html(goHome);
-    } else {
-        $('.box-rate').html(userNotExist());
-    }
-    $(document).on('click', '#addF', async function(e) {
-        e.preventDefault();
-        var star = $(".star-text").text();
-        var title = $("#title").val();
-        var body = $("#body").val();
-        if (title == '' && body == '') {
-            $('.error-title').empty();
-            $('.error-body').empty();
-            $('.error-title').html('Please enter your title');
-            $('.error-body').html('Please enter your review');
-        } else if (title == '') {
-            $('.error-title').empty();
-            $('.error-body').empty();
-            $('.error-title').html('Please enter your title');
-        } else if (body == '') {
-            $('.error-title').empty();
-            $('.error-body').empty();
-            $('.error-body').html('Please enter your review');
-        } else if (title != '' && body != '') {
-            $('.error-title').empty();
-            $('.error-body').empty();
-            var usercheck = await db.collection('USERS').where('email', '==', $('#email').val()).get();
-            if (usercheck.docs.length == 0) {
-                var email = $('#email').val();
-                var password = $('#password').val();
-                var user = "";
-                var uid = "";
-                if (email == '' || password == '') {
-                    $('.error').empty();
-                    $('.error').html('Please fill the form bellow');
-                } else if (email != '' && password != '') {
-                    $('.error').empty();
-                    $('.formSignup').css('display', 'block');
-                    $('.primary').css('display', 'none');
-                    $('.secondry').css('display', 'block');
-                    $(document).on('click', '#addS', async function(e) {
-                        var firstName = $('#firstName').val();
-                        var lastName = $('#lastName').val();
-                        if (firstName == '' && lastName == '') {
-                            $('.error-fName').empty();
-                            $('.error-lName').empty();
-                            $('.error-fName').html('Please enter you first Name');
-                            $('.error-lName').html('Please enter you last Name');
-                        } else if (firstName == '') {
-                            $('.error-fName').empty();
-                            $('.error-lName').empty();
-                            $('.error-fName').html('Please enter you first Name');
-                        } else if (lastName == '') {
-                            $('.error-fName').empty();
-                            $('.error-lName').empty();
-                            $('.error-lName').html('Please enter you last Name');
-                        } else if (firstName != '' && lastName != '') {
-                            $('.error').empty();
-                            auth.createUserWithEmailAndPassword(email, password).then(cred => {
-                                return user = cred.user.email,
-                                    uid = cred.user.uid,
-                                    db.collection('USERS').doc(cred.user.uid).set({
-                                        email: email,
-                                        password: password,
-                                        firstName: firstName,
-                                        lastName: lastName,
-                                        birthday: null,
-                                        dateCreation: output,
-                                        disableAccount: false,
-                                        phoneNumber: "",
-                                        profilePicture: ""
-                                    });
-                            }).then(() => {
-                                var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: user, uid: uid });
-                                chekReview(uid, myVar);
-                            }).catch((error) => {
-                                $('.error').html(error.message);
-                            });
-                        }
+document.onreadystatechange = (function() {
+    if (isCompanyExist(companyName) != "true") {
+        document.querySelector(".box-rate").innerHTML = goHome();
+    } else if (isCompanyExist(companyName) == "true") {
+        document.querySelector(".box-rate").innerHTML = userNotExist();
+        document.getElementById("addF").onclick = async function(e) {
+            firebase.initializeApp(firebaseConfig);
+            firebase.analytics();
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            e.preventDefault();
+            var star = document.querySelector(".star-text").textContent;
+            var title = document.getElementById("title").value;
+            var body = document.getElementById("body").value;
+            if (title == '' && body == '') {
+                document.querySelector(".error-title").innerHTML = '';
+                document.querySelector(".error-body").innerHTML = '';
+                document.querySelector(".error-title").innerHTML = 'Please enter your title';
+                document.querySelector(".error-body").innerHTML = 'Please enter your review';
+            } else if (title == '') {
+                document.querySelector(".error-title").innerHTML = '';
+                document.querySelector(".error-body").innerHTML = '';
+                document.querySelector(".error-title").innerHTML = 'Please enter your title';
+            } else if (body == '') {
+                document.querySelector(".error-title").innerHTML = '';
+                document.querySelector(".error-body").innerHTML = '';
+                document.querySelector(".error-body").innerHTML = 'Please enter your review';
+            } else if (title != '' && body != '') {
+                document.querySelector(".error-title").innerHTML = '';
+                document.querySelector(".error-body").innerHTML = '';
+                var usercheck = await db.collection('USERS').where('email', '==', $('#email').val()).get();
+                if (usercheck.docs.length == 0) {
+                    var email = document.getElementById("email").value;
+                    var password = document.getElementById("password").value;
+                    var user = "";
+                    var uid = "";
+                    if (email == '' || password == '') {
+                        document.querySelector(".error").innerHTML = '';
+                        document.querySelector(".error").innerHTML = 'Please fill the form bellow';
+                    } else if (email != '' && password != '') {
+                        document.querySelector(".error").innerHTML = '';
+                        document.querySelector(".formSignup").style.display = 'block';
+                        document.querySelector(".primary").style.display = 'none';
+                        document.querySelector(".secondry").style.display = 'block';
+                        document.getElementById("addS").onclick = async function(e) {
+                            var firstName = document.getElementById("firstName").value;
+                            var lastName = document.getElementById("lastName").value;
+                            if (firstName == '' && lastName == '') {
+                                document.querySelector(".error-fName").innerHTML = '';
+                                document.querySelector(".error-lName").innerHTML = '';
+                                document.querySelector(".error-fName").innerHTML = 'Please enter you first Name';
+                                document.querySelector(".error-lName").innerHTML = 'Please enter you last Name';
+                            } else if (firstName == '') {
+                                document.querySelector(".error-fName").innerHTML = '';
+                                document.querySelector(".error-lName").innerHTML = '';
+                                document.querySelector(".error-fName").innerHTML = 'Please enter you first Name';
+                            } else if (lastName == '') {
+                                document.querySelector(".error-fName").innerHTML = '';
+                                document.querySelector(".error-lName").innerHTML = '';
+                                document.querySelector(".error-lName").innerHTML = 'Please enter you last Name';
+                            } else if (firstName != '' && lastName != '') {
+                                document.querySelector(".error-fName").innerHTML = '';
+                                document.querySelector(".error-lName").innerHTML = '';
+                                auth.createUserWithEmailAndPassword(email, password).then(cred => {
+                                    return user = cred.user.email,
+                                        uid = cred.user.uid,
+                                        db.collection('USERS').doc(cred.user.uid).set({
+                                            email: email,
+                                            password: password,
+                                            firstName: firstName,
+                                            lastName: lastName,
+                                            birthday: null,
+                                            dateCreation: output,
+                                            disableAccount: false,
+                                            phoneNumber: "",
+                                            profilePicture: ""
+                                        });
+                                }).then(() => {
+                                    var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: user, uid: uid });
+                                    chekReview(uid, myVar);
+                                }).catch((error) => {
+                                    document.querySelector(".error").innerHTML = error.message;
+                                });
+                            }
+                        };
+                    }
+                } else {
+                    var email = document.getElementById("email").value;
+                    var password = document.getElementById("password").value;
+                    auth.signInWithEmailAndPassword(email, password).then(cred => {
+                        var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: cred.user.email, uid: cred.user.uid });
+                        chekReview(cred.user.uid, myVar);
+                        signupForm.querySelector('.error').innerHTML = '';
+                    }).catch(function(error) {
+                        document.querySelector(".error").innerHTML = '';
+                        document.querySelector(".error").innerHTML = error.message;
                     });
                 }
-            } else {
-                var email = $('#email').val();
-                var password = $('#password').val();
-                auth.signInWithEmailAndPassword(email, password).then(cred => {
-                    var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: cred.user.email, uid: cred.user.uid });
-                    chekReview(cred.user.uid, myVar);
-                    signupForm.querySelector('.error').innerHTML = "";
-                }).catch(function(error) {
-                    $('.error').empty();
-                    $('.error').html(error.message);
-                });
             }
-        }
-    });
+        };
+    }
 });
 
 function isCompanyExist(companyName) {
+    var xhttp = new XMLHttpRequest();
     var exist;
-    $.ajax({
-        async: false,
-        url: apiUrl + "/isCompanyExist",
-        type: "GET",
-        dataType: "json",
-        data: { company: companyName },
-        success: function(isExist) {
-            exist = isExist;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            exist = this.responseText;
         }
-    });
-    return exist;
-}
-
-function isReviewExist(uid, companyName) {
-    var exist;
-    $.ajax({
-        async: false,
-        url: apiUrl + "/isReviewExist",
-        type: "GET",
-        dataType: "json",
-        data: { uid: uid, company: companyName },
-        success: function(isExist) {
-            exist = isExist;
-        }
-    });
+    };
+    xhttp.open("GET", apiUrl + "/isCompanyExist?company=" + companyName, false);
+    xhttp.send();
     return exist;
 }
 
 function addReview(myVar) {
-    $.ajax({
-        async: false,
-        url: apiUrl + '/evaluate',
-        type: 'POST',
-        data: 'jsonData=' + myVar,
-        dataType: 'json',
-        success: function() {
-
-        }
-    });
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", apiUrl + "/evaluate?jsonData=" + myVar);
+    xhttp.send();
 }
 
 function chekReview(uid, myVar) {
-    $.ajax({
-        url: apiUrl + "/isReviewExist",
-        type: "GET",
-        dataType: "json",
-        data: { uid: uid, company: companyName },
-        success: function(isExist) {
-            if (!isExist) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            if (this.responseText == "false") {
                 addReview(myVar);
-                // window.location.replace("profile.html");
             } else {
-                $('.box-rate').empty();
-                $('.box-rate').html(goProfile());
+                document.querySelector(".box-rate").innerHTML = '';
+                document.querySelector(".box-rate").innerHTML = goProfile();
             }
         }
-    });
-}
+    };
+    xhttp.open("GET", apiUrl + "/isReviewExist?uid=" + uid + "&company=" + companyName);
+    xhttp.send();
 
-function getCompany() {
-    var company2;
-    $.ajax({
-        async: false,
-        url: apiUrl + "/company",
-        type: "GET",
-        dataType: "json",
-        data: { company: companyName },
-        success: function(companyInfo) {
-            company2 = companyInfo.company;
-        }
-    });
-    return company2;
-}
-
-function getUserInfo(userEmail) {
-    var user2;
-    $.ajax({
-        async: false,
-        url: apiUrl + "/user",
-        type: "GET",
-        dataType: "json",
-        data: { email: userEmail },
-        success: function(user) {
-            user2 = user;
-        }
-    });
-    return user2;
 }
 
 function starmarkIN(item) {
-    var onStar = parseInt($(item).data('value'), 10);
-    var stars = $(item).parent().children('span.star');
-    if (stars.data('name') == 'bad') {
-        $(stars[0]).removeClass('star-bad');
-    } else if (stars.data('name') == 'poor') {
-        $(stars[0]).removeClass('star-poor');
-        $(stars[1]).removeClass('star-poor');
-    } else if (stars.data('name') == 'average') {
-        $(stars[0]).removeClass('star-average');
-        $(stars[1]).removeClass('star-average');
-        $(stars[2]).removeClass('star-average');
-    } else if (stars.data('name') == 'great') {
-        $(stars[0]).removeClass('star-great');
-        $(stars[1]).removeClass('star-great');
-        $(stars[2]).removeClass('star-great');
-        $(stars[3]).removeClass('star-great');
-    } else if (stars.data('name') == 'excellent') {
-        $(stars[0]).removeClass('star-excellent');
-        $(stars[1]).removeClass('star-excellent');
-        $(stars[2]).removeClass('star-excellent');
-        $(stars[3]).removeClass('star-excellent');
-        $(stars[4]).removeClass('star-excellent');
-
+    var onStar = parseInt(item.getAttribute("data-value"), 10);
+    var stars = document.querySelectorAll("span.star");
+    if (stars[0].getAttribute("data-name") == 'bad') {
+        stars[0].classList.remove('star-bad');
+    } else if (stars[0].getAttribute("data-name") == 'poor') {
+        stars[0].classList.remove('star-poor');
+        stars[1].classList.remove('star-poor');
+    } else if (stars[0].getAttribute("data-name") == 'average') {
+        stars[0].classList.remove('star-average');
+        stars[1].classList.remove('star-average');
+        stars[2].classList.remove('star-average');
+    } else if (stars[0].getAttribute("data-name") == 'great') {
+        stars[0].classList.remove('star-great');
+        stars[1].classList.remove('star-great');
+        stars[2].classList.remove('star-great');
+        stars[3].classList.remove('star-great');
+    } else if (stars[0].getAttribute("data-name") == 'excellent') {
+        stars[0].classList.remove('star-excellent');
+        stars[1].classList.remove('star-excellent');
+        stars[2].classList.remove('star-excellent');
+        stars[3].classList.remove('star-excellent');
+        stars[4].classList.remove('star-excellent');
     }
     for (i = 0; i < onStar; i++) {
         if (i == 0) {
-            $(".star-text").text("1 star: Bad");
-            $(stars[i]).addClass('hover1');
+            document.querySelector('.star-text').textContent = "1 star: Bad";
+            stars[i].classList.add('hover1');
         } else if (i == 1) {
-            $(".star-text").text("2 star: Poor");
-            $(stars[i - 1]).addClass('hover2');
-            $(stars[i]).addClass('hover2');
+            document.querySelector('.star-text').textContent = "2 star: Poor";
+            stars[i - 1].classList.add('hover2');
+            stars[i].classList.add('hover2');
         } else if (i == 2) {
-            $(".star-text").text("3 star: Average");
-            $(stars[i - 2]).addClass('hover3');
-            $(stars[i - 1]).addClass('hover3');
-            $(stars[i]).addClass('hover3');
+            document.querySelector('.star-text').textContent = "3 star: Average";
+            stars[i - 2].classList.add('hover3');
+            stars[i - 1].classList.add('hover3');
+            stars[i].classList.add('hover3');
         } else if (i == 3) {
-            $(".star-text").text("4 star: Great");
-            $(stars[i]).removeClass('star-great');
-            $(stars[i - 3]).addClass('hover4');
-            $(stars[i - 2]).addClass('hover4');
-            $(stars[i - 1]).addClass('hover4');
-            $(stars[i]).addClass('hover4');
+            document.querySelector('.star-text').textContent = "4 star: Great";
+            stars[i - 3].classList.add('hover4');
+            stars[i - 2].classList.add('hover4');
+            stars[i - 1].classList.add('hover4');
+            stars[i].classList.add('hover4');
         } else if (i == 4) {
-            $(".star-text").text("5 star: Excellent");
-            $(stars[i - 4]).addClass('hover5');
-            $(stars[i - 3]).addClass('hover5');
-            $(stars[i - 2]).addClass('hover5');
-            $(stars[i - 1]).addClass('hover5');
-            $(stars[i]).addClass('hover5');
+            document.querySelector('.star-text').textContent = "5 star: Excellent";
+            stars[i - 4].classList.add('hover5');
+            stars[i - 3].classList.add('hover5');
+            stars[i - 2].classList.add('hover5');
+            stars[i - 1].classList.add('hover5');
+            stars[i].classList.add('hover5');
         }
     }
 }
 
 function starmarkOUT(item) {
-    var x = $(item).parent().children('span.star');
-    x.removeClass('hover1');
-    x.removeClass('hover2');
-    x.removeClass('hover3');
-    x.removeClass('hover4');
-    x.removeClass('hover5');
-    x.removeClass('star-bad');
-    x.removeClass('star-poor');
-    x.removeClass('star-average');
-    x.removeClass('star-great');
-    x.removeClass('star-excellent');
-    if (x.data('name') == 'bad') {
-        $(x[0]).addClass('star-bad');
-        $(".star-text").text("1 star: Bad");
-    } else if (x.data('name') == 'poor') {
-        $(x[0]).addClass('star-poor');
-        $(x[1]).addClass('star-poor');
-        $(".star-text").text("2 star: Poor");
-    } else if (x.data('name') == 'average') {
-        $(x[0]).addClass('star-average');
-        $(x[1]).addClass('star-average');
-        $(x[2]).addClass('star-average');
-        $(".star-text").text("3 star: Average");
-    } else if (x.data('name') == 'great') {
-        $(x[0]).addClass('star-great');
-        $(x[1]).addClass('star-great');
-        $(x[2]).addClass('star-great');
-        $(x[3]).addClass('star-great');
-        $(".star-text").text("4 star: Great");
-    } else if (x.data('name') == 'excellent') {
-        $(x[0]).addClass('star-excellent');
-        $(x[1]).addClass('star-excellent');
-        $(x[2]).addClass('star-excellent');
-        $(x[3]).addClass('star-excellent');
-        $(x[4]).addClass('star-excellent');
-        $(".star-text").text("5 star: Excellent");
+    var x = document.querySelectorAll("span.star");
+    var onStar = parseInt(item.getAttribute("data-value"), 10);
+    for (i = 0; i < onStar; i++) {
+        x[i].classList.remove('hover1');
+        x[i].classList.remove('hover2');
+        x[i].classList.remove('hover3');
+        x[i].classList.remove('hover4');
+        x[i].classList.remove('hover5');
+        x[i].classList.remove('star-bad');
+        x[i].classList.remove('star-poor');
+        x[i].classList.remove('star-average');
+        x[i].classList.remove('star-great');
+        x[i].classList.remove('star-excellent');
     }
-    if (x.data('bool') == false) {
-        $(".star-text").text("Roll over stars, then click to rate");
+    if (x[0].getAttribute("data-name") == 'bad') {
+        x[0].classList.add('star-bad');
+        document.querySelector('.star-text').textContent = "1 star: Bad";
+    } else if (x[0].getAttribute("data-name") == 'poor') {
+        x[1].classList.add('star-poor');
+        x[0].classList.add('star-poor');
+        document.querySelector('.star-text').textContent = "2 star: Poor";
+    } else if (x[0].getAttribute("data-name") == 'average') {
+        x[2].classList.add('star-average');
+        x[1].classList.add('star-average');
+        x[0].classList.add('star-average');
+        document.querySelector('.star-text').textContent = "3 star: Average";
+    } else if (x[0].getAttribute("data-name") == 'great') {
+        x[3].classList.add('star-great');
+        x[2].classList.add('star-great');
+        x[1].classList.add('star-great');
+        x[0].classList.add('star-great');
+        document.querySelector('.star-text').textContent = "4 star: Great";
+    } else if (x[0].getAttribute("data-name") == 'excellent') {
+        x[4].classList.add('star-excellent');
+        x[3].classList.add('star-excellent');
+        x[2].classList.add('star-excellent');
+        x[1].classList.add('star-excellent');
+        x[0].classList.add('star-excellent');
+        document.querySelector('.star-text').textContent = "5 star: Excellent";
+    }
+    if (x[0].getAttribute("data-bool") == false) {
+        document.querySelector('.star-text').textContent = "Roll over stars, then click to rate";
     }
 }
 
 function starmark(item) {
-    $(".body-review").css("display", "block");
-    var onStar = parseInt($(item).data('value'), 10);
-    var stars = $(item).parent().children('span.star');
-    stars.data('bool', 'true');
+    var firebaseAppScript = document.createElement('script');
+    firebaseAppScript.setAttribute('src', 'https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js');
+    document.head.appendChild(firebaseAppScript);
+    var firebaseAnalyticsScript = document.createElement('script');
+    firebaseAnalyticsScript.setAttribute('src', 'https://www.gstatic.com/firebasejs/7.14.1/firebase-analytics.js');
+    document.head.appendChild(firebaseAnalyticsScript);
+    var firebaseAuthScript = document.createElement('script');
+    firebaseAuthScript.setAttribute('src', 'https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js');
+    document.head.appendChild(firebaseAuthScript);
+    var firebaseFirestoreScript = document.createElement('script');
+    firebaseFirestoreScript.setAttribute('src', 'https://www.gstatic.com/firebasejs/7.14.1/firebase-firestore.js');
+    document.head.appendChild(firebaseFirestoreScript);
+    document.querySelector('.body-review').style.display = 'block';
+    var onStar = parseInt(item.getAttribute("data-value"), 10);
+    var stars = document.querySelectorAll("span.star");
+    stars[0].setAttribute('bool', 'true');
     for (i = 0; i < stars.length; i++) {
-        $(stars[i]).addClass('star-none');
+        stars[i].classList.add('star-none');
     }
-    for (i = 0; i < onStar; i++) {
-        if (i == 0) {
-            $(stars).data('name', 'bad');
-            $(stars[i]).addClass('star-bad');
-            $(".star-text").text("1 star: Bad");
-        } else if (i == 1) {
-            $(stars).data('name', 'poor');
-            $(stars[i - 1]).addClass('star-poor');
-            $(stars[i]).addClass('star-poor');
-            $(".star-text").text("2 star: Poor");
-        } else if (i == 2) {
-            $(stars).data('name', 'average');
-            $(stars[i - 2]).addClass('star-average');
-            $(stars[i - 1]).addClass('star-average');
-            $(stars[i]).addClass('star-average');
-            $(".star-text").text("3 star: Average");
-        } else if (i == 3) {
-            $(stars).data('name', 'great');
-            $(stars[i - 3]).addClass('star-great');
-            $(stars[i - 2]).addClass('star-great');
-            $(stars[i - 1]).addClass('star-great');
-            $(stars[i]).addClass('great');
-            $(".star-text").text("4 star: Great");
-        } else if (i == 4) {
-            $(stars).data('name', 'excellent');
-            $(stars[i - 4]).addClass('star-excellent');
-            $(stars[i - 3]).addClass('star-excellent');
-            $(stars[i - 2]).addClass('star-excellent');
-            $(stars[i - 1]).addClass('star-excellent');
-            $(stars[i]).addClass('star-excellent');
-            $(".star-text").text("5 star: Excellent");
-        }
+    if (onStar == 1) {
+        stars[0].setAttribute('data-name', 'bad');
+        stars[0].classList.add('star-bad');
+        document.querySelector('.star-text').textContent = "1 star: Bad";
+    } else if (onStar == 2) {
+        stars[0].setAttribute('data-name', 'poor');
+        stars[1].classList.add('star-poor');
+        stars[0].classList.add('star-poor');
+        document.querySelector('.star-text').textContent = "2 star: Poor";
+    } else if (onStar == 3) {
+        stars[0].setAttribute('data-name', 'average');
+        stars[2].classList.add('star-average');
+        stars[1].classList.add('star-average');
+        stars[0].classList.add('star-average');
+        document.querySelector('.star-text').textContent = "3 star: Average";
+    } else if (onStar == 4) {
+        stars[0].setAttribute('data-name', 'great');
+        stars[3].classList.add('star-great');
+        stars[2].classList.add('star-great');
+        stars[1].classList.add('star-great');
+        stars[0].classList.add('star-great');
+        document.querySelector('.star-text').textContent = "4 star: Great";
+    } else if (onStar == 5) {
+        stars[0].setAttribute('data-name', 'excellent');
+        stars[4].classList.add('star-excellent');
+        stars[3].classList.add('star-excellent');
+        stars[2].classList.add('star-excellent');
+        stars[1].classList.add('star-excellent');
+        stars[0].classList.add('star-excellent');
+        document.querySelector('.star-text').textContent = "5 star: Excellent";
     }
 }
 
 function pass() {
-    var title = $('#title').val();
-    var body = $('#body').val();
+    var title = document.getElementById("title").value;
+    var body = document.getElementById("body").value;
     if (title == '' && body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else if (title == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
     } else if (body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.post').css("display", "none");
-        $('.SignUp').css("display", "block");
-        $('.continue').css("display", "none");
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".SignUp").style.display = 'block';
+        document.querySelector(".EmailSignUp").style.display = 'block';
+        document.querySelector(".continue").style.display = 'none';
     }
 }
 
-function showEmail() {
-    $('#EmailSignUp').css("display", "block");
-    $('.continue-with-email').css("display", "none");
-}
+var firebaseConfig = {
+    apiKey: "AIzaSyC3fOGWSafYmB1CKM8rDh_kVDHA08h6dRw",
+    authDomain: "vereview.firebaseapp.com",
+    databaseURL: "https://vereview.firebaseio.com",
+    projectId: "vereview",
+    storageBucket: "vereview.appspot.com",
+    messagingSenderId: "278465510459",
+    appId: "1:278465510459:web:cdda6a9ab3560f7700f01e",
+    measurementId: "G-VCJ7449BLG"
+};
 
 function GoogleSignUp() {
-    $('#EmailSignUp').css("display", "none");
-    $('.continue-with-email').css("display", "block");
-    var star = $(".star-text").text();
-    var title = $("#title").val();
-    var body = $("#body").val();
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    var star = document.querySelector('.star-text').textContent;
+    var title = document.getElementById("title").value;
+    var body = document.getElementById("body").value;
     if (title == '' && body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else if (title == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
     } else if (body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else {
-        $('.error-title').empty();
-        $('.error-body').empty();
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
         var provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().useDeviceLanguage();
         var user = "";
@@ -428,26 +397,29 @@ function GoogleSignUp() {
 }
 
 function FbSignUp() {
-    $('#EmailSignUp').css("display", "none");
-    $('.continue-with-email').css("display", "block");
-    var star = $(".star-text").text();
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    var star = document.querySelector('.star-text').textContent;
     var title = $("#title").val();
     var body = $("#body").val();
     if (title == '' && body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else if (title == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-title').html('Please enter your title');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-title").innerHTML = 'Please enter your title';
     } else if (body == '') {
-        $('.error-title').empty();
-        $('.error-body').empty();
-        $('.error-body').html('Please enter your review');
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = 'Please enter your review';
     } else {
-        $('.error-title').empty();
+        document.querySelector(".error-title").innerHTML = '';
+        document.querySelector(".error-body").innerHTML = '';
         $('.error-body').empty();
         var provider = new firebase.auth.FacebookAuthProvider();
         provider.addScope('user_birthday');
@@ -481,9 +453,7 @@ function FbSignUp() {
 }
 
 function userNotExist() {
-    var userNotExist = `<span class="Roboto-bold">Voice your opinion! Review</span>
-    <span class="Roboto-bold nw-text-info">${getCompany()}</span>
-    <span class="Roboto-bold">now.</span>
+    var userNotExist = `
     <div class="col-lg-12 pd-t4">
         <div class="row mrg-b3 d-flex justify-content-center">
             <div class="bg-shadow-border nw-bg-grey-9 pd2 box-border">
@@ -491,22 +461,32 @@ function userNotExist() {
                     <p class="Roboto-medium pd-l2 nw-text-grey">Rating</p>
                 </div>
                 <div class="col-lg-12">
-                    <div class="row d-flex align-items-center pd-b1">
-                        <div class="col-lg-6 col-md-6 col-12 stars-global white-space-nowrap">
+                    <div class="row pd-b1">
+                        <div class="col-lg-6 col-md-6 col-12 stars-global d-flex align-items-center white-space-nowrap ">
                             <span class="star" data-value='1' data-bool='false' data-name='none' onclick="starmark(this)" onmouseover="starmarkIN(this)" onmouseout="starmarkOUT(this)">
-                                    <span class="fa fa-star star-content"></span>
+                                <svg class="bi bi-star-fill star-content" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
                             </span>
                             <span class="star" data-value='2' data-bool='false' data-name='none' onclick="starmark(this)" onmouseover="starmarkIN(this)" onmouseout="starmarkOUT(this)">
-                                    <span class="fa fa-star star-content"></span>
+                                <svg class="bi bi-star-fill star-content" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
                             </span>
                             <span class="star" data-value='3' data-bool='false' data-name='none' onclick="starmark(this)" onmouseover="starmarkIN(this)" onmouseout="starmarkOUT(this)">
-                                    <span class="fa fa-star star-content"></span>
+                                <svg class="bi bi-star-fill star-content" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
                             </span>
                             <span class="star" data-value='4' data-bool='false' data-name='none' onclick="starmark(this)" onmouseover="starmarkIN(this)" onmouseout="starmarkOUT(this)">
-                                    <span class="fa fa-star star-content"></span>
+                                <svg class="bi bi-star-fill star-content" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
                             </span>
                             <span class="star" data-value='5' data-bool='false' data-name='none' onclick="starmark(this)" onmouseover="starmarkIN(this)" onmouseout="starmarkOUT(this)">
-                                    <span class="fa fa-star star-content"></span>
+                                <svg class="bi bi-star-fill star-content" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
                             </span>
                         </div>
                         <div class="col-lg-6 col-md-6 white-space-nowrap">
@@ -531,9 +511,8 @@ function userNotExist() {
                 </div>
                 <div class="SignUp col-lg-12">
                     <p class="Roboto-regular pd-t1 nw-text-grey">Post and verify yourself with </p><br>
-                    <button type="button" id="SignUpFacebook" onclick="FbSignUp()" class="btn btn-fb mrg-b3"><i class="fab fa-facebook-f pr-1"></i> Facebook</button>
-                    <button type="button" id="SignUpGoogle" onclick="GoogleSignUp()" class="btn btn-gplus mrg-b3"><i class="fab fa-google-plus-g pr-1"></i> Google</button><br>
-                    <p class="Roboto-regular nw-text-grey continue-with-email d-flex justify-content-center"><button class="nav-link btn-with-email text-center" onclick="showEmail()" type="submit">Continue with email</button></p>
+                    <button type="button" id="SignUpFacebook" onclick="FbSignUp()" class="btn btn-fb mrg-b3 border"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg> Facebook</button>
+                    <button type="button" id="SignUpGoogle" onclick="GoogleSignUp()" class="btn btn-gplus mrg-b3 border"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 11v2.4h3.97c-.16 1.029-1.2 3.02-3.97 3.02-2.39 0-4.34-1.979-4.34-4.42 0-2.44 1.95-4.42 4.34-4.42 1.36 0 2.27.58 2.79 1.08l1.9-1.83c-1.22-1.14-2.8-1.83-4.69-1.83-3.87 0-7 3.13-7 7s3.13 7 7 7c4.04 0 6.721-2.84 6.721-6.84 0-.46-.051-.81-.111-1.16h-6.61zm0 0 17 2h-3v3h-2v-3h-3v-2h3v-3h2v3h3v2z" fill-rule="evenodd" clip-rule="evenodd"/></svg> Google</button><br>
                 </div>
                 <div class="col-lg-12 EmailSignUp" id="EmailSignUp">
                     <div class="error text-center nw-text-danger size15"></div>
@@ -547,11 +526,11 @@ function userNotExist() {
                         <div class="col-lg-12 formSignup">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <input type="text" id="lastName" class="form-control" placeholder="Last Name">
+                                    <input type="text" id="firstName" class="form-control" placeholder="First Name">
                                     <div class="error-lName text-right nw-text-danger size15"></div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <input type="text" id="firstName" class="form-control" placeholder="First Name">
+                                    <input type="text" id="lastName" class="form-control" placeholder="Last Name">
                                     <div class="error-fName text-right nw-text-danger size15"></div>
                                 </div>
                             </div>
