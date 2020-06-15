@@ -527,11 +527,11 @@ function userNotExist() {
                             <div class="row">
                                 <div class="col-lg-6">
                                     <input type="text" id="firstName" class="form-control" placeholder="First Name">
-                                    <div class="error-lName text-right nw-text-danger size15"></div>
+                                    <div class="error-fName text-right nw-text-danger size15"></div>
                                 </div>
                                 <div class="col-lg-6">
                                     <input type="text" id="lastName" class="form-control" placeholder="Last Name">
-                                    <div class="error-fName text-right nw-text-danger size15"></div>
+                                    <div class="error-lName text-right nw-text-danger size15"></div>
                                 </div>
                             </div>
                         </div>
