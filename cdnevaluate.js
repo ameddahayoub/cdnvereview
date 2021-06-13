@@ -102,6 +102,7 @@ document.onreadystatechange = (function() {
                                         });
                                 }).then(() => {
                                     var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: user, uid: uid });
+                                    console.log(myVar);
                                     chekReview(uid, myVar);
                                 }).catch((error) => {
                                     document.querySelector(".error").innerHTML = error.message;
