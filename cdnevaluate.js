@@ -22,7 +22,19 @@ document.onreadystatechange = (function() {
             const auth = firebase.auth();
             const db = firebase.firestore();
             e.preventDefault();
-            var star = document.querySelector(".star-text").textContent;
+            var star_content = document.querySelector('.star-text').textContent;
+            var star = "";
+            if (star_content == "1 star: Bad") {
+                star = "1";
+            } else if (star_content == "2 star: Poor") {
+                star = "2";
+            } else if (star_content == "3 star: Average") {
+                star = "3";
+            } else if (star_content == "4 star: Great") {
+                star = "4";
+            } else if (star_content == "5 star: Excellent") {
+                star = "5";
+            }
             var title = document.getElementById("title").value;
             var body = document.getElementById("body").value;
             if (title == '' && body == '') {
@@ -344,7 +356,19 @@ function GoogleSignUp() {
     firebase.analytics();
     const auth = firebase.auth();
     const db = firebase.firestore();
-    var star = document.querySelector('.star-text').textContent;
+    var star_content = document.querySelector('.star-text').textContent;
+    var star = "";
+    if (star_content == "1 star: Bad") {
+        star = "1";
+    } else if (star_content == "2 star: Poor") {
+        star = "2";
+    } else if (star_content == "3 star: Average") {
+        star = "3";
+    } else if (star_content == "4 star: Great") {
+        star = "4";
+    } else if (star_content == "5 star: Excellent") {
+        star = "5";
+    }
     var title = document.getElementById("title").value;
     var body = document.getElementById("body").value;
     if (title == '' && body == '') {
@@ -401,7 +425,19 @@ function FbSignUp() {
     firebase.analytics();
     const auth = firebase.auth();
     const db = firebase.firestore();
-    var star = document.querySelector('.star-text').textContent;
+    var star_content = document.querySelector('.star-text').textContent;
+    var star = "";
+    if (star_content == "1 star: Bad") {
+        star = "1";
+    } else if (star_content == "2 star: Poor") {
+        star = "2";
+    } else if (star_content == "3 star: Average") {
+        star = "3";
+    } else if (star_content == "4 star: Great") {
+        star = "4";
+    } else if (star_content == "5 star: Excellent") {
+        star = "5";
+    }
     var title = $("#title").val();
     var body = $("#body").val();
     if (title == '' && body == '') {
