@@ -115,6 +115,7 @@ document.onreadystatechange = (function() {
                     var password = document.getElementById("password").value;
                     auth.signInWithEmailAndPassword(email, password).then(cred => {
                         var myVar = JSON.stringify({ company: companyName, star: star, title: title, body: body, user: cred.user.email, uid: cred.user.uid });
+                        console.log(myVar);
                         chekReview(cred.user.uid, myVar);
                         signupForm.querySelector('.error').innerHTML = '';
                     }).catch(function(error) {
